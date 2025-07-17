@@ -1,0 +1,13 @@
+﻿services:
+  spendly.api:
+    image: spendly.api
+    build:
+      context: .
+      dockerfile: Spendly.API/Dockerfile
+
+  presentation:
+    image: presentation
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+
