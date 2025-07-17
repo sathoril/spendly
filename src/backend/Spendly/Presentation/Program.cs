@@ -1,8 +1,28 @@
+using Domain.Entities;
+using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+        {
+            document.Info.Version = "v1";
+            document.Info.Title = "Spendly API";
+            document.Info.Description = "OpenAPI documentation for Spendly.";
+            document.Info.Contact = new OpenApiContact
+            {
+                Email = "bruno.feabreu@proton.me",
+                Name = "Bruno Fernando Corrêa de Abreu",
+                Url = new Uri("https://github.com/sathoril/spendly")
+            };
+            return Task.CompletedTask;
+        }
+    )
+)
+.AddControllers();
 
 var app = builder.Build();
 
@@ -10,32 +30,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Spendly")
+            .WithSidebar(true);
+    });
+    app.MapControllers();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
-
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

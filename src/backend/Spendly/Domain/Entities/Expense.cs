@@ -2,7 +2,7 @@ using Domain.Entities.Base;
 
 namespace Domain.Entities;
 
-public class Expense : MonetaryTransaction
+public class Expense : Transaction
 {
     
 }
