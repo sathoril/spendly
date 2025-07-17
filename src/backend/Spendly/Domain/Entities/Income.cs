@@ -1,0 +1,8 @@
+using Domain.Entities.Base;
+
+namespace Domain.Entities;
+
+public class Income : MonetaryTransaction
+{
+    
+}
